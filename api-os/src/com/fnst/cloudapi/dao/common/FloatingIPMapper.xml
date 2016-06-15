@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.fnst.cloudapi.dao.common.FloatingIPMapper">
+
+
+	<resultMap id="BaseResultMap" type="com.fnst.cloudapi.pojo.openstackapi.forgui.FloatingIP">
+	    <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="tenant_id" property="tenantId" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="VARCHAR" />
+        <result column="router_id" property="routerId" jdbcType="VARCHAR" />
+        <result column="network_id" property="networkId" jdbcType="VARCHAR" />
+        <result column="instance_id" property="instanceId" jdbcType="VARCHAR" />
+        <result column="floating_ip_address" property="floatingIpAddress" jdbcType="VARCHAR" />
+        <result column="type" property="type" jdbcType="VARCHAR" />
+        <result column="created_at" property="createdAt" jdbcType="VARCHAR" />
+    </resultMap>
+
+    
+    <sql id="all_fields">
+        id,name,tenant_id,status,router_id,network_id,instance_id,floating_ip_address,type,created_at
+	</sql>
+	
+	<!--basic super mapper -->
+    
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+     select <include refid="all_fields" /> from floatingips where id=#{id}
+    </select>
+    
+    <select id="selectByInstanceId" resultMap="BaseResultMap" parameterType="java.lang.String">
+     select <include refid="all_fields" /> from floatingips where instance_id=#{instanceId}
+    </select>
+    
+    <select id="selectByRouterId" resultMap="BaseResultMap" parameterType="java.lang.String">
+     select <include refid="all_fields" /> from floatingips where router_id=#{routerId}
+    </select>
+    
+    <select id="selectByNetworkId" resultMap="BaseResultMap" parameterType="java.lang.String">
+     select <include refid="all_fields" /> from floatingips where network_id=#{networkId}
+    </select>
+    
+    <select id="selectListByInstanceId" resultMap="BaseResultMap" parameterType="java.lang.String">
+      select <include refid="all_fields" />
+	  from floatingips where instance_id=#{instanceId}
+    </select>
+    
+    <select id="selectListByRouterId" resultMap="BaseResultMap" parameterType="java.lang.String">
+      select <include refid="all_fields" />
+	  from floatingips where router_id=#{routerId}
+    </select>
+    
+    <select id="selectListByNetworkId" resultMap="BaseResultMap" parameterType="java.lang.String">
+      select <include refid="all_fields" />
+	  from floatingips where network_id=#{networkId}
+    </select>
+    
+    <insert id="insertSelective" parameterType="com.fnst.cloudapi.pojo.openstackapi.forgui.FloatingIP">
+		insert into floatingips ( <include refid="all_fields" /> )
+		values (
+		#{id}, #{name},#{tenantId}, #{status},#{routerId},#{networkId},#{instanceId},#{floatingIpAddress},#{type},#{createdAt}
+		)
+	</insert>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="com.fnst.cloudapi.pojo.openstackapi.forgui.FloatingIP">
+        update floatingips set name=#{name},tenant_id=#{tenantId},status=#{status},router_id=#{routerId},network_id=#{networkId},
+        instance_id=#{instanceId},floating_ip_address=#{floatingIpAddress},type=#{type},created_at=#{createdAt}
+        where id = #{id}
+    </update>
+    
+    <delete id= "deleteByPrimaryKey" parameterType="java.lang.String">
+       delete from floating_ips where id =#{id}
+	</delete>
+  
+   <!-- self dao -->
+	<select id="selectAll" resultMap="BaseResultMap">
+      select <include refid="all_fields" />
+	  from floatingips 
+    </select>
+     
+    <select id="selectAllForPage" resultMap="BaseResultMap">
+      select <include refid="all_fields" />
+	  from floatingips  limit #{0}, #{1}
+    </select>  
+ 
+</mapper>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fnst.cloudapi.dao.common.PortMapper">
+	<resultMap id="BaseResultMap" type="com.fnst.cloudapi.pojo.openstackapi.forgui.Port">
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="mac_address" property="macAddress" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="VARCHAR" />
+        <result column="network_id" property="network_id" jdbcType="VARCHAR" />  
+        <result column="subnet_id" property="subnetId" jdbcType="VARCHAR" />
+        <result column="device_owner" property="deviceOwner" jdbcType="VARCHAR" />       
+        <result column="created_at" property="createdAt" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="all_fields">
+        id,name, mac_address,status,network_id,subnet_id,device_owner,created_at
+	</sql>
+	
+ <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+     select <include refid="all_fields" /> from ports where id=#{id}
+    </select>
+    
+    <select id="selectByNetworkId" resultMap="BaseResultMap" parameterType="java.lang.String">
+     select <include refid="all_fields" /> from ports where network_id=#{networkId}
+    </select>
+    
+    <select id="selectListByNetworkId" resultMap="BaseResultMap" parameterType="java.lang.String">
+      select <include refid="all_fields" />
+	  from ports where network_id=#{networkId}
+    </select>
+    
+    <insert id="insertSelective" parameterType="com.fnst.cloudapi.pojo.openstackapi.forgui.Port">
+		insert into ports ( <include refid="all_fields" /> )
+		values (
+		#{id}, #{name}, #{macAddress},#{status}, #{networkId}, #{subnetId},#{deviceOwner}, #{createdAt}
+		)
+	</insert>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="com.fnst.cloudapi.pojo.openstackapi.forgui.Port">
+        update ports set name = #{name},mac_address = #{macAddress},status = #{status}, network_id = #{networkId},
+        subnet_id = #{subnetId},device_owner = #{deviceOwner},created_at = #{createdAt}
+        where id = #{id}
+    </update>
+    
+    <delete id= "deleteByPrimaryKey" parameterType="java.lang.String">
+       delete from ports where id =#{id}
+	</delete>
+	
+	<!-- self dao -->
+    <select id="countNum" resultType="java.lang.Integer">
+	  select count(*) as num from ports
+	</select>
+	
+	
+    <select id="selectAllList" resultMap="BaseResultMap">
+      select <include refid="all_fields" />
+	  from ports 
+    </select>
+    
+    <select id="selectListForPage" resultMap="BaseResultMap">
+      select <include refid="all_fields" />
+	  from ports  limit #{0}, #{1}
+    </select>    
+      
+</mapper>

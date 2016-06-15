@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fnst.cloudapi.dao.common.BackupMapper">
+	<resultMap id="BaseResultMap" type="com.fnst.cloudapi.pojo.openstackapi.forgui.Backup">
+	    <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="VARCHAR" />
+        <result column="volume_id" property="volumeId" jdbcType="VARCHAR" />
+        <result column="size" property="size" jdbcType="VARCHAR" />
+        <result column="created_at" property="createdAt" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <sql id="all_fields">
+        id, name, status,volume_id,size,created_at
+	</sql>
+	
+	<!-- basic super dao -->
+	
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+     select <include refid="all_fields" /> from backups where id=#{id}
+    </select>
+    
+    <select id="selectByInstanceId" resultMap="BaseResultMap" parameterType="java.lang.String">
+     select <include refid="all_fields" /> from backups where volume_id=#{volumeId}
+    </select>
+    
+    <select id="selectListByInstanceId" resultMap="BaseResultMap" parameterType="java.lang.String">
+      select <include refid="all_fields" />
+	  from backups where volume_id=#{volumeId}
+    </select>
+    
+    <insert id="insertSelective" parameterType="com.fnst.cloudapi.pojo.openstackapi.forgui.Volume">
+		insert into backups ( <include refid="all_fields" /> )
+		values (
+		#{id}, #{name}, #{status}, #{volumeId}, #{size}, #{createdAt}
+		)
+	</insert>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="com.fnst.cloudapi.pojo.openstackapi.forgui.Volume">
+        update backups set status = #{status}, name = #{name},volume_id = #{volumeId},
+        size = #{size},created_at = #{createdAt}
+        where id = #{id}
+    </update>
+    
+    <delete id= "deleteByPrimaryKey" parameterType="java.lang.String">
+       delete from backups where id =#{id}
+	</delete>
+	
+	<!-- self dao -->
+    <select id="countNum" resultType="java.lang.Integer">
+	  select count(*) as num from backups
+	</select>
+	
+	
+    <select id="selectList" resultMap="BaseResultMap">
+      select <include refid="all_fields" />
+	  from backups 
+    </select>
+    
+    <select id="countNumByInstanceStatus" resultType="java.lang.Integer" parameterType="java.lang.String">
+	  select count(*) as num from backups where status =#{status}
+	</select>
+     
+    <select id="selectListForPage" resultMap="BaseResultMap">
+      select <include refid="all_fields" />
+	  from backups  limit #{0}, #{1}
+    </select>    
+
+</mapper>

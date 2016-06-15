@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fnst.cloudapi.dao.common.SubnetMapper">
+	<resultMap id="BaseResultMap" type="com.fnst.cloudapi.pojo.openstackapi.forgui.Subnet">
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="segment" property="segment" jdbcType="VARCHAR" />
+        <result column="ip_version" property="ipVersion" jdbcType="VARCHAR" />
+        <result column="gateway" property="gateway" jdbcType="VARCHAR" />
+        <result column="cidr" property="cidr" jdbcType="VARCHAR" />
+        <result column="network_id" property="network_id" jdbcType="VARCHAR" />        
+        <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <sql id="all_fields">
+        id,name, segment, ip_version, gateway, cidr, network_id, created_at
+	</sql>
+	
+	<!--basic super mapper -->
+    
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+     select <include refid="all_fields" /> from subnets where id=#{id}
+    </select>
+    
+    <insert id="insertSelective" parameterType="com.fnst.cloudapi.pojo.openstackapi.forgui.Subnet">
+		insert into subnets ( <include refid="all_fields" /> )
+		values (
+		  #{id}, #{name}, #{segment}, #{ipVersion}, #{gateway}, #{cidr}, #{network_id}, #{createdAt}
+		)
+	</insert>
+	
+	<insert id="insertTenantsSubnets" parameterType="com.fnst.cloudapi.pojo.openstackapi.forgui.Subnet">
+		insert into tenants_subnets ("tenant_id", "subnet_id")
+		values (#{tenant_id}, #{id})
+	</insert>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="com.fnst.cloudapi.pojo.openstackapi.forgui.Subnet">
+        update subnets set name = #{name}, segment = #{segment}, ip_version=#{ipVersion}, gateway=#{gateway}, 
+        cidr=#{cidr}, network_id=#{network_id}, created_at=#{createdAt}
+        where id = #{id}
+    </update>
+    
+    <delete id= "deleteByPrimaryKey" parameterType="java.lang.String">
+       delete from subnets where id = #{id}
+       delete from tenants_subnets where subnet_id = #{id}
+	</delete>
+	
+	<delete id= "deleteTenantsSubnets" parameterType="java.lang.String">
+       delete from tenants_subnets where subnet_id = #{subnet_id}
+	</delete>
+	
+    <select id="selectAllList" resultMap="BaseResultMap">
+     select <include refid="all_fields" />
+	 from subnets 
+    </select>
+    
+    <select id="selectListByTenantId" resultMap="BaseResultMap">
+     select tenant_id, <include refid="all_fields" />
+	 from tenants_subnets as ts join subnets as sb
+	 ON ts.subnet_id = sb.id
+	 where ts.tenant_id = #{tenant_id}
+    </select>
+    
+    <select id="selectListByNetworkId" resultMap="BaseResultMap">
+     select <include refid="all_fields" />
+	 from subnets
+	 where network_id = #{network_id}
+    </select>
+      
+</mapper>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fnst.cloudapi.dao.common.TokenOsMapper">
+
+	<resultMap id="BaseResultMap" type="com.fnst.cloudapi.pojo.common.TokenOs">
+        <id column="ostokenid" property="tokenid" jdbcType="VARCHAR" />
+        <result column="tenantuserid" property="tenantUserid" jdbcType="VARCHAR" />
+        <result column="createtime" property="createtime" jdbcType="BIGINT" />
+        <result column="expirestime" property="expiresTime" jdbcType="BIGINT" />
+        <result column="currentregion" property="currentRegion" jdbcType="VARCHAR" />
+        <result column="ostenantid" property="tenantid" jdbcType="VARCHAR" />
+        <result column="osdomainid" property="domainid" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <sql id="all_fields">
+        tokenos.ostokenid, tokenos.tenantuserid, tokenos.createtime, tokenos.expirestime,tokenos.currentregion,user_tenant_domain.ostenantid,user_tenant_domain.osdomainid
+	</sql>
+	
+	<sql id="basic_fields">
+        ostokenid,tenantuserid, createtime, expirestime,currentregion
+	</sql>
+	
+	<!--basic super mapper -->
+    
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+     select <include refid="all_fields" /> from tokenos,user_tenant_domain where tokenos.ostokenid=#{id}
+     and user_tenant_domain.id = tokenos.tenantuserid
+    </select>
+    
+    <insert id="insertSelective" parameterType="com.fnst.cloudapi.pojo.common.TokenOs">
+		insert into tokenos ( <include refid="basic_fields" /> )
+		values (
+		#{tokenid}, #{tenantuserid}, #{createtime}, #{expirestime},#{currentRegion}
+		)
+	</insert>
+	
+
+	<update id="updateByPrimaryKeySelective" parameterType="com.fnst.cloudapi.pojo.common.TokenOs">
+        update tokenos set guitokenid = #{guitokenid}, createtime = #{createtime}, 
+        expirestime=#{expiresTime},currentregion=#{currentRegion}
+        where ostokenid = #{tokenid}
+    </update>
+
+    <delete id= "deleteByPrimaryKey" parameterType="java.lang.String">
+       delete from tokenos where ostokenid =$id$
+	</delete>
+  
+   <!-- self dao -->
+    <select id="countNum" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select count(*) as num from tokenos where ostokenid = #{ostokenid};
+	</select>
+	
+    <select id="selectListByDomainTenantUserId" resultMap="BaseResultMap" parameterType="java.lang.String">
+     select <include refid="all_fields" />
+	 from tokenos,user_tenant_domain where tokenos.tenantuserid=#{tenantuserid} 
+	 and user_tenant_domain.id = tokenos.tenantuserid
+    </select>
+    
+    <select id="selectListByDomainTenantUser" resultMap="BaseResultMap" parameterType="com.fnst.cloudapi.pojo.common.DomainTenantUser">
+     select <include refid="all_fields" />
+	 from tokenos,user_tenant_domain where  user_tenant_domain.userid=#{userid}
+	 and user_tenant_domain.ostenantid=#{ostenantid}
+	 and user_tenant_domain.osdomainid=#{osdomainid}
+	 and user_tenant_domain.id = tokenos.tenantuserid
+    </select>
+
+	<update id="updateOnlyRegion" parameterType="com.fnst.cloudapi.pojo.common.TokenOs">
+        update tokenos set currentregion=#{currentRegion}
+        where ostokenid = #{tokenid}
+    </update>
+        
+     <!-- xml规则不允许的字符使用时，需用cdata声明 -->  
+    <delete id= "deleteBytime" parameterType= "java.sql.Date">
+       delete from tokenos where
+        <![CDATA[expirestime  < #{nowtime}]]>     
+	</delete>
+    
+</mapper>

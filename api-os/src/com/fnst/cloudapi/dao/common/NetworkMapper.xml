@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fnst.cloudapi.dao.common.NetworkMapper">
+	<resultMap id="BaseResultMap" type="com.fnst.cloudapi.pojo.openstackapi.forgui.Network">
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="VARCHAR" />
+        <result column="subnet_id" property="subnetId" jdbcType="VARCHAR" />
+        <result column="port_id" property="portId" jdbcType="VARCHAR" />
+        <result column="floatingip_id" property="floatingipId" jdbcType="VARCHAR" />
+        <result column="created_at" property="createdAt" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="all_fields">
+        id,name, status, subnet_id,port_id,floatingip_id,created_at
+	</sql>
+	
+	<!--basic super mapper -->
+    
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+     select <include refid="all_fields" /> from networks where id=#{id}
+    </select>
+    
+    <insert id="insertSelective" parameterType="com.fnst.cloudapi.pojo.openstackapi.forgui.Network">
+		insert into networks ( <include refid="all_fields" /> )
+		values (
+		  #{id}, #{name}, #{status}, #{subnetId},#{portId},#{floatingipId},#{createdAt}
+		)
+	</insert>
+	
+	 <insert id="insertInstancesNetworks" parameterType="com.fnst.cloudapi.pojo.openstackapi.forgui.Network">
+		insert into instances_networks("instance_id", "network_id")
+		values (
+		  #{instance_id}, #{id}
+		 )
+	</insert>
+	
+	 <insert id="insertTenantsNetworks" parameterType="com.fnst.cloudapi.pojo.openstackapi.forgui.Network">
+		insert into tenants_networks("tenant_id", "network_id")
+		values(
+		  #{tennat_id}, #{id}
+		)
+	</insert>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="com.fnst.cloudapi.pojo.openstackapi.forgui.Network">
+        update networks set name = #{name}, status = #{status}, subnet_id=#{subnetId},port_id=#{portId},floatingip_id=#{floatingipId}created_at=#{createdAt}
+        where id = #{id}
+    </update>
+    
+    <delete id= "deleteByPrimaryKey" parameterType="java.lang.String">
+       delete from networks where id =#{id}
+       delete from tenants_networks where network_id = #{id}
+       delete from instances_networks where network_id = #{id}
+	</delete>
+	
+	<delete id= "deleteInstancesNetworks" parameterType="java.lang.String">
+       delete from instances_networks where network_id = #{network_id}
+	</delete>
+	
+	<delete id= "deleteTenantsNetworks" parameterType="java.lang.String">
+       delete from tenants_networks where network_id = #{network_id}
+	</delete>
+	
+    <select id="selectAllList" resultMap="BaseResultMap">
+     select <include refid="all_fields" />
+	 from networks 
+    </select>
+    
+    <select id="selectListByTenantId" resultMap="BaseResultMap">
+     select <include refid="all_fields" />
+	 from networks
+	 where tenant_id = #{tenant_id}
+    </select>
+
+</mapper>

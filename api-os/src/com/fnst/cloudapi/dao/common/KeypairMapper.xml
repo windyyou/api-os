@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fnst.cloudapi.dao.common.KeypairMapper">
+	<resultMap id="BaseResultMap" type="com.fnst.cloudapi.pojo.openstackapi.forgui.Keypair">
+	    <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="fingerprint" property="fingerprint" jdbcType="VARCHAR" />
+        <result column="public_key" property="public_key" jdbcType="VARCHAR" />
+        <result column="user_id" property="user_id" jdbcType="VARCHAR" />
+        <result column="instance_id" property="instanceId" jdbcType="VARCHAR" />
+         <result column="created_at" property="created_at" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <sql id="all_fields">
+        id, name, fingerprint,public_key,user_id,instance_id,created_at
+	</sql>
+	
+	<!-- basic super dao -->
+	
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+     select <include refid="all_fields" /> from keypairs where id=#{id}
+    </select>
+    
+    <select id="selectByInstanceId" resultMap="BaseResultMap" parameterType="java.lang.String">
+     select <include refid="all_fields" /> from keypairs where instance_id=#{instanceId}
+    </select>
+    
+    <select id="selectListByInstanceId" resultMap="BaseResultMap" parameterType="java.lang.String">
+      select <include refid="all_fields" />
+	  from keypairs where instance_id=#{instanceId}
+    </select>
+    
+    <insert id="insertSelective" parameterType="com.fnst.cloudapi.pojo.openstackapi.forgui.Keypair">
+		insert into keypairs ( <include refid="all_fields" /> )
+		values (
+		#{id}, #{name}, #{fingerprint}, #{public_key}, #{user_id}, #{instanceId},#{created_at}
+		)
+	</insert>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="com.fnst.cloudapi.pojo.openstackapi.forgui.Keypair">
+        update keypairs set fingerprint = #{fingerprint}, name = #{name},public_key = #{public_key},
+        user_id = #{user_id},created_at = #{created_at},instance_id = #{instanceId}
+        where id = #{id}
+    </update>
+    
+    <delete id= "deleteByPrimaryKey" parameterType="java.lang.String">
+       delete from keypairs where id =#{id}
+	</delete>
+	
+	<!-- self dao -->
+    <select id="countNum" resultType="java.lang.Integer">
+	  select count(*) as num from keypairs
+	</select>
+	
+	
+    <select id="selectList" resultMap="BaseResultMap">
+      select <include refid="all_fields" />
+	  from keypairs 
+    </select>
+    
+    <select id="countNumByInstanceStatus" resultType="java.lang.Integer" parameterType="java.lang.String">
+	  select count(*) as num from keypairs where status =#{status}
+	</select>
+     
+    <select id="selectListForPage" resultMap="BaseResultMap">
+      select <include refid="all_fields" />
+	  from keypairs  limit #{0}, #{1}
+    </select>    
+
+</mapper>

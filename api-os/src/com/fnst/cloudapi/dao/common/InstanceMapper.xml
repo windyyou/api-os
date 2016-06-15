@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fnst.cloudapi.dao.common.InstanceMapper">
+	<resultMap id="BaseResultMap" type="com.fnst.cloudapi.pojo.openstackapi.forgui.Instance">
+	    <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="VARCHAR" />
+        <result column="image_name" property="sourceName" jdbcType="VARCHAR" />
+        <result column="image_id" property="sourceId" jdbcType="VARCHAR" />
+        <result column="core" property="core" jdbcType="VARCHAR" />
+        <result column="ram" property="ram" jdbcType="VARCHAR" />
+        <result column="network_id" property="networkId" jdbcType="VARCHAR" />
+        <result column="fixed_ip" property="fixedIp" jdbcType="VARCHAR" />
+        <result column="floating_ip" property="floatingIp" jdbcType="VARCHAR" />
+        <result column="created_at" property="createdAt" jdbcType="VARCHAR" />
+        <result column="type" property="type" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <sql id="all_fields">
+        id, name, status,image_name,image_id,core,ram,network_id,fixed_ip,floating_ip,created_at,type
+	</sql>
+	
+	<!-- basic super dao -->
+	
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+     select <include refid="all_fields" /> from instances where id=#{id}
+    </select>
+    
+    <insert id="insertSelective" parameterType="com.fnst.cloudapi.pojo.openstackapi.forgui.Instance">
+		insert into instances ( <include refid="all_fields" /> )
+		values (
+		#{id}, #{name}, #{status}, #{sourceName}, #{sourceId}, #{core},
+		#{ram},#{networkId},#{fixedIp},#{floatingIp},#{createdAt},#{type}
+		)
+	</insert>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="com.fnst.cloudapi.pojo.openstackapi.forgui.Instance">
+        update instances set status = #{status}, name = #{name},image_name = #{sourceName},image_id = #{sourceId},core = #{core},
+        ram = #{ram},network_id=#{networkId},fixed_ip=#{fixedIp},floating_ip=#{floatingIp},created_at=#{createdAt},type=#{type}
+        where id = #{id}
+    </update>
+    
+    <delete id= "deleteByPrimaryKey" parameterType="java.lang.String">
+       delete from instances where id =#{id}
+	</delete>
+	
+	<!-- self dao -->
+    <select id="countNum" resultType="java.lang.Integer">
+	  select count(*) as num from instances
+	</select>
+	
+	
+    <select id="selectList" resultMap="BaseResultMap">
+      select <include refid="all_fields" />
+	  from instances 
+    </select>
+    
+    <select id="countNumByInstanceStatus" resultType="java.lang.Integer" parameterType="java.lang.String">
+	  select count(*) as num from instances where status =#{status}
+	</select>
+     
+    <select id="selectListForPage" resultMap="BaseResultMap">
+      select <include refid="all_fields" />
+	  from instances  limit #{0}, #{1}
+    </select>    
+
+</mapper>

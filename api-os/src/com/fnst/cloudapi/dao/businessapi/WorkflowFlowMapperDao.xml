@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fnst.cloudapi.dao.businessapi.WorkflowFlowMapperDao">
+
+	<resultMap id="BaseResultMap" type="com.fnst.cloudapi.pojo.businessapi.workflow.WorkflowFlowMapper">
+	    <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="flow_name" property="flowName" jdbcType="VARCHAR" />
+        <result column="Jbpm_processDefId" property="JbpmProcessDefId" jdbcType="VARCHAR" />
+        <result column="created_at" property="createdAt" jdbcType="TIMESTAMP" />
+        <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    
+    <sql id="all_fields">
+        id,flow_name,Jbpm_processDefId
+	</sql>
+	
+	<!--basic super mapper -->
+    
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+     select <include refid="all_fields" /> from workflow_flow_mapper where id=#{id}
+    </select>
+    
+    <insert id="insertSelective" parameterType="com.fnst.cloudapi.pojo.businessapi.workflow.WorkflowFlowMapper">
+		insert into workflow_flow_mapper ( <include refid="all_fields" /> )
+		values (
+		#{id}, #{flowName},#{JbpmProcessDefId}
+		)
+	</insert>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="com.fnst.cloudapi.pojo.businessapi.workflow.WorkflowFlowMapper">
+        update workflow_flow_mapper set flow_name=#{flowName},Jbpm_processDefId=#{JbpmProcessDefId}
+        where id = #{id}
+    </update>
+    
+    <delete id= "deleteByPrimaryKey" parameterType="java.lang.String">
+       delete from workflow_flow_mapper where id =#{id}
+	</delete>
+  
+   <!-- self dao -->
+	<select id="selectAll" resultMap="BaseResultMap">
+      select <include refid="all_fields" />
+	  from workflow_flow_mapper 
+    </select>
+     
+    <select id="selectAllForPage" resultMap="BaseResultMap">
+      select <include refid="all_fields" />
+	  from workflow_flow_mapper  limit #{0}, #{1}
+    </select>  
+    
+    <select id="selectProcessByFlowName" resultMap="BaseResultMap" parameterType="java.lang.String">
+      select <include refid="all_fields" />
+	  from workflow_flow_mapper  where flow_name=#{flowName} limit 1
+    </select>  
+ 
+</mapper>

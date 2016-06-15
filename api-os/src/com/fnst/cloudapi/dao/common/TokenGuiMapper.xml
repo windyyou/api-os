@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fnst.cloudapi.dao.common.TokenGuiMapper">
+
+	<resultMap id="BaseResultMap" type="com.fnst.cloudapi.pojo.common.TokenGui">
+        <id column="guitokenid" property="tokenid" jdbcType="VARCHAR" />
+        <result column="userid" property="userid" jdbcType="VARCHAR" />
+        <result column="createtime" property="createTime" jdbcType="BIGINT" />
+        <result column="expirestime" property="expiresTime" jdbcType="BIGINT" />
+    </resultMap>
+ 
+    <sql id="all_fields">
+        tokenid,userid,createtime,expirestime
+	</sql>  
+	
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+     select <include refid="all_fields" /> from tokengui where guitokenid=#{id}
+    </select>
+    
+    <insert id="insertSelective" parameterType="com.fnst.cloudapi.pojo.common.TokenGui">
+		insert into tokengui ( <include refid="all_fields" /> )
+		values (
+		#{tokenid}, #{userid}, #{createTime}, #{expiresTime}
+		)
+	</insert>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="com.fnst.cloudapi.pojo.common.TokenGui">
+        update tokengui set userid = #{userid}, 
+        createtime = #{createTime}, expirestime=#{expiresTime}
+        where guitokenid = #{tokenid}
+    </update>
+     
+    <delete id= "deleteByPrimaryKey" parameterType="java.lang.String">
+       delete from tokengui where guitokenid =$id$
+	</delete>
+	
+<!-- selt dao -->	
+    <select id="countNum" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select count(*) as num from tokengui where guitokenid = #{guitokenid}
+	</select>
+	
+    <select id="selectListByUser" resultMap="BaseResultMap" parameterType= "java.lang.String"> 
+     select <include refid="all_fields" />
+	 from tokengui where userid=#{userid}
+    </select>
+    
+    <!-- xml规则不允许的字符使用时，需用cdata声明 -->  
+    <delete id="deleteBytime" parameterType="java.lang.Long">
+       delete from tokengui where
+        <![CDATA[expirestime  < #{nowtime}]]>     
+	</delete>
+</mapper>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fnst.cloudapi.dao.common.FlavorMapper">
+
+	<resultMap id="BaseResultMap" type="com.fnst.cloudapi.pojo.openstackapi.forgui.Flavor">
+	    <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="ram" property="raw" jdbcType="INTEGER" />
+        <result column="vcpus" property="vcpus" jdbcType="INTEGER" />
+        <result column="disk" property="disk" jdbcType="INTEGER" />
+        <result column="swap" property="swap" jdbcType="INTEGER" />
+        <result column="rxtx_factor" property="rxtx_factor" jdbcType="VARCHAR" />
+    </resultMap>
+
+    
+    <sql id="all_fields">
+        id,name,ram,vcpus,status,disk,swap,rxtx_factor
+	</sql>
+	
+	<!--basic super mapper -->
+    
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+     select <include refid="all_fields" /> from flavors where id=#{id}
+    </select>
+    
+    <insert id="insertSelective" parameterType="com.fnst.cloudapi.pojo.openstackapi.forgui.Flavor">
+		insert into flavors ( <include refid="all_fields" /> )
+		values (
+		#{id}, #{name},#{ram}, #{vcpus},#{disk},#{swap},,#{rxtx_factor}
+		)
+	</insert>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="com.fnst.cloudapi.pojo.openstackapi.forgui.Flavor">
+        update flavors set name=#{name},ram=#{ram},vcpus=#{vcpus},disk=#{disk},swap=#{swap},rxtx_factor=#{rxtx_factor}
+        where id = #{id}
+    </update>
+    
+    <delete id= "deleteByPrimaryKey" parameterType="java.lang.String">
+       delete from flavors where id =#{id}
+	</delete>
+  
+   <!-- self dao -->
+	<select id="selectAll" resultMap="BaseResultMap">
+      select <include refid="all_fields" />
+	  from flavors 
+    </select>
+     
+    <select id="selectAllForPage" resultMap="BaseResultMap">
+      select <include refid="all_fields" />
+	  from flavors  limit #{0}, #{1}
+    </select>  
+ 
+</mapper>
